@@ -2,8 +2,6 @@ package com.example.camera102;
 
 import java.io.File;
 
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -40,7 +38,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	final static String CAMERA_TMP_FILE = "cmr102.jpg";
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 200;
 
-	private Button choosePictureButton, chooseVideoButton, takePictureButton;
+	private Button choosePictureButton, chooseVideoButton, takePictureButton,
+			exit;
 	private ImageView image;
 	private Uri uriCameraImage = null;
 
@@ -86,24 +85,26 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		takePictureButton = (Button) this.findViewById(R.id.TakePictureButton);
 		takePictureButton.setOnClickListener(this);
+		exit = (Button) this.findViewById(R.id.exit);
+		exit.setOnClickListener(this);
 
 	}
 
 	public void onClick(View v) {
-		if (v == choosePictureButton) {
+		if (v == exit) {
+			finish();
+			System.exit(0);
+		} else if (v == choosePictureButton) {
 
 			try {
-				setContentView(R.layout.mainloading);
+				// setContentView(R.layout.mainloading);
 				Intent intent = new Intent(Intent.ACTION_PICK);
 				intent.setType("image/*"); // limit to image types for now
 				startActivityForResult(intent, GALLERY_RESULT);
 
 			} catch (Exception e) {
-				Toast.makeText(this, "Unable to open Gallery app",
-						Toast.LENGTH_LONG).show();
-				Log.e(TAG,
-						"error loading gallery app to choose photo: "
-								+ e.getMessage(), e);
+				Toast.makeText(this, "Unable to open Gallery app", Toast.LENGTH_LONG).show();
+				Log.e(TAG,"error loading gallery app to choose photo: "	+ e.getMessage(), e);
 			}
 
 		} else if (v == chooseVideoButton) {
@@ -111,7 +112,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			try {
 				setContentView(R.layout.mainloading);
 				Intent intent = new Intent(Intent.ACTION_PICK);
-				intent.setType("video/*"); // limit to image types for now
+				intent.setType("video/*"); // limit to video types for now
 				startActivityForResult(intent, GALLERY_RESULT);
 
 			} catch (Exception e) {
@@ -140,8 +141,8 @@ public class MainActivity extends Activity implements OnClickListener {
 						+ "/DCIM/Camera");
 				if (!tmpFileDirectory.exists())
 					tmpFileDirectory.mkdirs();
-				
-				File tmpFile = new File(tmpFileDirectory,CAMERA_TMP_FILE);
+
+				File tmpFile = new File(tmpFileDirectory, CAMERA_TMP_FILE);
 
 				uriCameraImage = Uri.fromFile(tmpFile);
 				// uriCameraImage =
@@ -163,11 +164,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			takePictureButton.setVisibility(View.VISIBLE);
 			choosePictureButton.setVisibility(View.VISIBLE);
 			chooseVideoButton.setVisibility(View.VISIBLE);
-
 		}
 	}
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
