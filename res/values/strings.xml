@@ -8,5 +8,7 @@
     <string name="edit_picture">Edit Picture</string>
     <string name="edit_video">Edit Video</string>
     <string name="exit">Exit</string>
-    
+    <string name="about">This app was developed by the Group 11 Team.</string>
+    <string name="about2">Thanks for use this app!</string>
+
 </resources>
