@@ -1,4 +1,4 @@
-package detector_face;
+package com.example.camera102;
 /* package/detection face
 ***
 @author 11B Vu Tien Dung
