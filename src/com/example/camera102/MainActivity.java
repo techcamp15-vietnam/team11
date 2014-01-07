@@ -166,7 +166,45 @@ public class MainActivity extends Activity implements OnClickListener {
 			chooseVideoButton.setVisibility(View.VISIBLE);
 		}
 	}
+	
+	private void displayAbout() {
 
+		StringBuffer msg = new StringBuffer();
+
+		msg.append(getString(R.string.app_name));
+
+		String versNum = "";
+
+		try {
+			String pkg = getPackageName();
+			versNum = getPackageManager().getPackageInfo(pkg, 0).versionName;
+		} catch (Exception e) {
+			versNum = "";
+		}
+
+		msg.append(" v" + versNum);
+		msg.append('\n');
+		msg.append('\n');
+
+		msg.append(getString(R.string.about));
+
+		msg.append('\n');
+		msg.append('\n');
+
+		msg.append(getString(R.string.about2));
+
+		msg.append('\n');
+		msg.append('\n');
+
+		showDialog(msg.toString());
+	}
+
+	private void showDialog(String msg) {
+		new AlertDialog.Builder(this).setTitle(getString(R.string.app_name))
+				.setMessage(msg).create().show();
+	}
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
