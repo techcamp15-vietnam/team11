@@ -64,9 +64,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
 		setLayout();
 		deleteTmpFile();
 
@@ -89,7 +87,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		exit.setOnClickListener(this);
 
 	}
-
+	/*Onclick
+	 Event button exit, choose picture and video onclick
+	@author 11A Bach Ngoc Tuan*/
 	public void onClick(View v) {
 		if (v == exit) {
 			finish();
@@ -97,14 +97,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		} else if (v == choosePictureButton) {
 
 			try {
-				// setContentView(R.layout.mainloading);
+				 setContentView(R.layout.mainloading);
 				Intent intent = new Intent(Intent.ACTION_PICK);
 				intent.setType("image/*"); // limit to image types for now
 				startActivityForResult(intent, GALLERY_RESULT);
 
 			} catch (Exception e) {
-				Toast.makeText(this, "Unable to open Gallery app", Toast.LENGTH_LONG).show();
-				Log.e(TAG,"error loading gallery app to choose photo: "	+ e.getMessage(), e);
+				Toast.makeText(this, "Unable to open Gallery app",
+						Toast.LENGTH_LONG).show();
+				Log.e(TAG,
+						"error loading gallery app to choose photo: "
+								+ e.getMessage(), e);
 			}
 
 		} else if (v == chooseVideoButton) {
@@ -124,7 +127,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 
 		} else if (v == takePictureButton) {
-
+			/*Onclick
+			 Event button takePicture
+			@author 11C Dang Xuan Binh*/
 			setContentView(R.layout.mainloading);
 
 			String storageState = Environment.getExternalStorageState();
@@ -145,10 +150,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				File tmpFile = new File(tmpFileDirectory, CAMERA_TMP_FILE);
 
 				uriCameraImage = Uri.fromFile(tmpFile);
-				// uriCameraImage =
-				// getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-				// values);
-
+			
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 				intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCameraImage);
 
@@ -166,7 +168,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			chooseVideoButton.setVisibility(View.VISIBLE);
 		}
 	}
-	
+	/*
+	 * displayAbout()
+	 * display About App 
+	 * @author 11C Dang Xuan Binh*/
 	private void displayAbout() {
 
 		StringBuffer msg = new StringBuffer();
@@ -203,8 +208,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		new AlertDialog.Builder(this).setTitle(getString(R.string.app_name))
 				.setMessage(msg).create().show();
 	}
-	
-	
+	/*
+	 * onCreateOptionsMenu
+	 * CreateOptionsMenu 
+	 * @author 11A Bach Ngoc Tuan*/
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
