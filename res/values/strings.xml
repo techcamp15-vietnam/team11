@@ -4,5 +4,9 @@
     <string name="app_name">Camera102</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="camera">Camera</string>
+    <string name="edit_picture">Edit Picture</string>
+    <string name="edit_video">Edit Video</string>
+    <string name="exit">Exit</string>
+    
 </resources>
