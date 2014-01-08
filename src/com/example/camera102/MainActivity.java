@@ -1,7 +1,7 @@
 package com.example.camera102;
 
 import java.io.File;
-
+import com.example.camera102.ImageEditor;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -38,8 +38,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	final static String CAMERA_TMP_FILE = "cmr102.jpg";
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 200;
 
-	private Button choosePictureButton, chooseVideoButton, takePictureButton,
-			exit;
+	private Button choosePictureButton, chooseVideoButton, takePictureButton, exit;
 	private ImageView image;
 	private Uri uriCameraImage = null;
 
@@ -130,84 +129,125 @@ public class MainActivity extends Activity implements OnClickListener {
 			/*Onclick
 			 Event button takePicture
 			@author 11C Dang Xuan Binh*/
-			setContentView(R.layout.mainloading);
-
-			String storageState = Environment.getExternalStorageState();
-			if (storageState.equals(Environment.MEDIA_MOUNTED)) {
-
-				ContentValues values = new ContentValues();
-
-				values.put(MediaStore.Images.Media.TITLE, CAMERA_TMP_FILE);
-
-				values.put(MediaStore.Images.Media.DESCRIPTION, "cam102");
-
-				File tmpFileDirectory = new File(Environment
-						.getExternalStorageDirectory().getPath()
-						+ "/DCIM/Camera");
-				if (!tmpFileDirectory.exists())
-					tmpFileDirectory.mkdirs();
-
-				File tmpFile = new File(tmpFileDirectory, CAMERA_TMP_FILE);
-
-				uriCameraImage = Uri.fromFile(tmpFile);
+           setContentView(R.layout.mainloading);
 			
-				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, uriCameraImage);
+			String storageState = Environment.getExternalStorageState();
+	        if(storageState.equals(Environment.MEDIA_MOUNTED)) {
 
-				startActivityForResult(intent, CAMERA_RESULT);
-			} else {
-				new AlertDialog.Builder(MainActivity.this)
-						.setMessage(
-								"External Storeage (SD Card) is required.\n\nCurrent state: "
-										+ storageState).setCancelable(true)
-						.create().show();
-			}
+	          
+	            ContentValues values = new ContentValues();
+	          
+	            values.put(MediaStore.Images.Media.TITLE, CAMERA_TMP_FILE);
+	      
+	            values.put(MediaStore.Images.Media.DESCRIPTION,"ssctmp");
 
+	            File tmpFileDirectory = new File(Environment.getExternalStorageDirectory().getPath() + ImageEditor.TMP_FILE_DIRECTORY);
+	            if (!tmpFileDirectory.exists())
+	            	tmpFileDirectory.mkdirs();
+	            
+	            File tmpFile = new File(tmpFileDirectory,"cam" + ImageEditor.TMP_FILE_NAME);
+	        	
+	        	uriCameraImage = Uri.fromFile(tmpFile);
+	            //uriCameraImage = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+	            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE );
+	            intent.putExtra( MediaStore.EXTRA_OUTPUT, uriCameraImage);
+	            
+	            startActivityForResult(intent, CAMERA_RESULT);
+	        }   else {
+	            new AlertDialog.Builder(MainActivity.this)
+	            .setMessage("External Storeage (SD Card) is required.\n\nCurrent state: " + storageState)
+	            .setCancelable(true).create().show();
+	        }
+	        
 			takePictureButton.setVisibility(View.VISIBLE);
 			choosePictureButton.setVisibility(View.VISIBLE);
 			chooseVideoButton.setVisibility(View.VISIBLE);
+			
+		} 
+	}
+/*onActivityResult
+ * @author 11A Bach Ngoc Tuan
+ * */
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		
+		
+		if (resultCode == RESULT_OK)
+		{
+			setContentView(R.layout.mainloading);
+			
+			if (requestCode == GALLERY_RESULT) 
+			{
+				if (intent != null)
+				{
+					Uri uriGalleryFile = intent.getData();
+					
+					try
+						{
+							if (uriGalleryFile != null)
+							{
+								Cursor cursor = managedQuery(uriGalleryFile, null, 
+		                                null, null, null); 
+								cursor.moveToNext(); 
+								// Retrieve the path and the mime type 
+								String path = cursor.getString(cursor 
+								                .getColumnIndex(MediaStore.MediaColumns.DATA)); 
+								String mimeType = cursor.getString(cursor 
+								                .getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+								
+								if (mimeType == null || mimeType.startsWith("image"))
+								{
+									
+								}
+								else if (mimeType.startsWith("video"))
+								{
+		
+									
+								}
+							}
+							else
+							{
+								Toast.makeText(this, "Unable to load media.", Toast.LENGTH_LONG).show();
+			
+							}
+						}
+					catch (Exception e)
+					{
+						Toast.makeText(this, "Unable to load media.", Toast.LENGTH_LONG).show();
+						Log.e(TAG, "error loading media: " + e.getMessage(), e);
+
+					}
+				}
+				else
+				{
+					Toast.makeText(this, "Unable to load photo.", Toast.LENGTH_LONG).show();
+	
+				}
+					
+			}
+			else if (requestCode == CAMERA_RESULT)
+			{
+				//Uri uriCameraImage = intent.getData();
+				
+				if (uriCameraImage != null)
+				{
+					Intent passingIntent = new Intent(this,ImageEditor.class);
+					passingIntent.setData(uriCameraImage);
+					startActivityForResult(passingIntent,IMAGE_EDITOR);
+				}
+				else
+				{
+					takePictureButton.setVisibility(View.VISIBLE);
+					choosePictureButton.setVisibility(View.VISIBLE);
+				}
+			}
 		}
-	}
-	/*
-	 * displayAbout()
-	 * display About App 
-	 * @author 11C Dang Xuan Binh*/
-	private void displayAbout() {
-
-		StringBuffer msg = new StringBuffer();
-
-		msg.append(getString(R.string.app_name));
-
-		String versNum = "";
-
-		try {
-			String pkg = getPackageName();
-			versNum = getPackageManager().getPackageInfo(pkg, 0).versionName;
-		} catch (Exception e) {
-			versNum = "";
-		}
-
-		msg.append(" v" + versNum);
-		msg.append('\n');
-		msg.append('\n');
-
-		msg.append(getString(R.string.about));
-
-		msg.append('\n');
-		msg.append('\n');
-
-		msg.append(getString(R.string.about2));
-
-		msg.append('\n');
-		msg.append('\n');
-
-		showDialog(msg.toString());
-	}
-
-	private void showDialog(String msg) {
-		new AlertDialog.Builder(this).setTitle(getString(R.string.app_name))
-				.setMessage(msg).create().show();
-	}
+		else
+			setLayout();
+		
+		
+		
+	}	
 	/*
 	 * onCreateOptionsMenu
 	 * CreateOptionsMenu 
