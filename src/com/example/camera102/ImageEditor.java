@@ -131,7 +131,7 @@ public class ImageEditor extends Activity implements OnTouchListener,
 	// Constant for temp filename
 	public final static String TMP_FILE_NAME = "tmp.jpg";
 
-	public final static String TMP_FILE_DIRECTORY = "/Android/data/org.witness.sscphase1/files/";
+	public final static String TMP_FILE_DIRECTORY = "/Android/camera102";
 
 	/*
 	 * handles threaded events for the UI thread
@@ -458,40 +458,20 @@ public class ImageEditor extends Activity implements OnTouchListener,
 	 * @author 11A Bach Ngoc Tuan
 	 */
 	private int doAutoDetection() {
-		// This should be called via a pop-up/alert mechanism
-
+		
 		ArrayList<DetectedFace> dFaces = runFaceDetection();
 
 		if (dFaces == null)
 			return 0;
 
-		// for (int adr = 0; adr < autodetectedRects.length; adr++) {
-
 		Iterator<DetectedFace> itDFace = dFaces.iterator();
 
 		while (itDFace.hasNext()) {
 			DetectedFace dFace = itDFace.next();
-
-			// debug(ActivityMain.TAG,"AUTODETECTED imageView Width, Height: " +
-			// imageView.getWidth() + " " + imageView.getHeight());
-			// debug(ActivityMain.TAG,"UNSCALED RECT:" +
-			// autodetectedRects[adr].left + " " + autodetectedRects[adr].top +
-			// " " + autodetectedRects[adr].right + " " +
-			// autodetectedRects[adr].bottom);
-
+			
 			RectF autodetectedRectScaled = new RectF(dFace.bounds.left,
 					dFace.bounds.top, dFace.bounds.right, dFace.bounds.bottom);
 
-			// debug(ActivityMain.TAG,"SCALED RECT:" +
-			// autodetectedRectScaled.left + " " + autodetectedRectScaled.top +
-			// " " + autodetectedRectScaled.right + " " +
-			// autodetectedRectScaled.bottom);
-
-			// Probably need to map autodetectedRects to scaled rects
-			// debug(ActivityMain.TAG,"MAPPED RECT:" +
-			// autodetectedRects[adr].left + " " + autodetectedRects[adr].top +
-			// " " + autodetectedRects[adr].right + " " +
-			// autodetectedRects[adr].bottom);
 
 			float faceBuffer = (autodetectedRectScaled.right - autodetectedRectScaled.left) / 5;
 
@@ -505,6 +485,12 @@ public class ImageEditor extends Activity implements OnTouchListener,
 		}
 
 		return dFaces.size();
+	}
+
+	private void createImageRegion(float f, float g, float h, float i,
+			boolean isLast, boolean isLast2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/*
@@ -559,11 +545,79 @@ public class ImageEditor extends Activity implements OnTouchListener,
 	private void debug(String tag, String message) {
 		Log.d(tag, message);
 	}
-
+	/*
+	 * Handles normal onClicks for buttons registered to this.
+	 * Currently only the zoomIn and zoomOut buttons
+	 * @author 11A Bach Ngoc Tuan
+	 */
 	@Override
-	public void onClick(View arg0) {
-		// TODO Auto-generated method stub
+	public void onClick(View v) {
+		
+		 if (v == zoomIn) 
+		{
+			float scale = 1.5f;
+			
+			PointF midpoint = new PointF(imageView.getWidth()/2, imageView.getHeight()/2);
+			matrix.postScale(scale, scale, midpoint.x, midpoint.y);
+			imageView.setImageMatrix(matrix);
+		//	putOnScreen();
+		} 
+		else if (v == zoomOut) 
+		{
+			float scale = 0.75f;
 
+			PointF midpoint = new PointF(imageView.getWidth()/2, imageView.getHeight()/2);
+			matrix.postScale(scale, scale, midpoint.x, midpoint.y);
+			imageView.setImageMatrix(matrix);
+			
+	//		putOnScreen();
+		} 
+		else if (v == btnNew)
+		{
+			//newDefaultRegion();
+		}
+		else if (v == btnPreview)
+		{
+			//showPreview();
+		}
+		else if (v == btnSave)
+		{
+			//Why does this not show?
+	    	mProgressDialog = ProgressDialog.show(this, "", "Saving...", true, true);
+
+    		mHandler.postDelayed(new Runnable() {
+    			  @Override
+    			  public void run() {
+    			    // this will be done in the Pipeline Thread
+    	        		//saveImage();
+    			  }
+    			},500);
+		}
+		else if (v == btnShare)
+		{
+			// Share Image
+      		//shareImage();
+		}
+		else if (mode != DRAG && mode != ZOOM) 
+		{
+			float defaultSize = imageView.getWidth()/4;
+			float halfSize = defaultSize/2;
+			
+			RectF newBox = new RectF();
+			
+			newBox.left = startPoint.x - halfSize;
+			newBox.top = startPoint.y - halfSize;
+
+			newBox.right = startPoint.x + halfSize;
+			newBox.bottom = startPoint.y + halfSize;
+			
+			Matrix iMatrix = new Matrix();
+			matrix.invert(iMatrix);
+			iMatrix.mapRect(newBox);
+						
+			createImageRegion(newBox.left, newBox.top, newBox.right, newBox.bottom, true, true);
+		}
+		
 	}
 
 	@Override
