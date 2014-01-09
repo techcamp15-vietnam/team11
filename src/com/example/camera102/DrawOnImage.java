@@ -69,7 +69,7 @@ public class DrawOnImage extends Activity {
 	}
 	/* package/blur face
 	***
-	@author 11B Vu Tien Dung
+	@author 11A Bach Ngoc Tuan
 	*/
 	private Bitmap FaceBlur(Bitmap bitmap,FaceDetector.Face[] faces) {
     	int a=0;
