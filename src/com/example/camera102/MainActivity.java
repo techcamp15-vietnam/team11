@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -21,10 +22,12 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnClickListener {
 
 	public final static String TAG = "CMR";
+	
 
 	final static int CAMERA_RESULT = 0;
 	final static int GALLERY_RESULT = 1;
@@ -116,15 +119,19 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		}
 	}
+
 	/*
 	 * Creating file uri to store image/video
+	 * 
 	 * @author 11C Dang Xuan Binh
 	 */
 	public Uri getOutputMediaFileUri(int type) {
 		return Uri.fromFile(getOutputMediaFile(type));
 	}
+
 	/*
 	 * getOutputMediaFile
+	 * 
 	 * @author 11C Dang Xuan Binh
 	 */
 	private static File getOutputMediaFile(int type) {
@@ -150,35 +157,14 @@ public class MainActivity extends Activity implements OnClickListener {
 		File mediaFile;
 		if (type == MEDIA_TYPE_IMAGE) {
 			mediaFile = new File(mediaStorageDir.getPath() + File.separator
-					+ "IMG_" + timeStamp + ".jpg");
+					+ "CMR102_" + timeStamp + ".jpg");
 		} else {
 			return null;
 		}
 
 		return mediaFile;
 	}
-	/*
-	 * previewCapturedImage()
-	 * @author 11C Dang Xuan Binh
-	 */
-	private void previewCapturedImage() {
-		try {
 
-			image.setVisibility(View.VISIBLE);
-
-			// bimatp factory
-			BitmapFactory.Options options = new BitmapFactory.Options();
-
-			// downsizing image as it throws OutOfMemory Exception for larger
-			// images
-			
-			final Bitmap bitmap = BitmapFactory.decodeFile(
-					uriCameraImage.getPath(), options);
-			image.setImageBitmap(bitmap);
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		}
-	}
 
 	/*
 	 * onActivityResult
@@ -188,24 +174,36 @@ public class MainActivity extends Activity implements OnClickListener {
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
 
-		if (resultCode == RESULT_OK) {
-			setContentView(R.layout.mainloading);
-
+		if (resultCode == RESULT_OK) {		
 			if (requestCode == GALLERY_RESULT) {
-				setContentView(R.layout.imageviewer);
-				image = (ImageView) findViewById(R.id.ImageEditorImageView);
 				Uri selectedImageUri = intent.getData();
-				image.setImageURI(selectedImageUri);
-
+				 selectedImagePath = getPath(selectedImageUri);	   
+				 Intent ImagePath = new Intent(this,DrawOnImage.class);
+				 ImagePath.putExtra("name", selectedImagePath);
+				 startActivity(ImagePath);
+				
 			} else if (requestCode == CAPTURE_IMAGE) {
 				setContentView(R.layout.imageviewer);
-				image = (ImageView) findViewById(R.id.ImageEditorImageView);
-				previewCapturedImage();
+			    image = (ImageView) findViewById(R.id.ImageEditorImageView);
+				image.setImageURI(uriCameraImage);
+				
 			}
+
 		} else
 			setLayout();
 	}
-
+	/*
+	 * get string Path
+	 * @param Uri
+	 * @author 11A Bach Ngoc Tuan
+	 */
+	 public String getPath(Uri uri) {
+	        String[] projection = { MediaStore.Images.Media.DATA };
+	        Cursor cursor = managedQuery(uri, projection, null, null, null);
+	        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+	        cursor.moveToFirst();
+	        return cursor.getString(column_index);
+	    }
 	/*
 	 * onCreateOptionsMenu CreateOptionsMenu
 	 * 
@@ -221,5 +219,4 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		return true;
 	}
-
 }
