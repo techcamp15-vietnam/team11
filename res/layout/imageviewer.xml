@@ -2,7 +2,8 @@
 <!--
 Layout/imageviewer
 ***
-@author 11A Bach Ngoc Tuan  -->
+@author 11A Bach Ngoc Tuan
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/frameRoot"
     android:layout_width="fill_parent"
@@ -10,10 +11,8 @@ Layout/imageviewer
 
     <ImageView
         android:id="@+id/ImageEditorImageView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@drawable/gradient"
-        android:scaleType="matrix" >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
     </ImageView>
 
     <LinearLayout
