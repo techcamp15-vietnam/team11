@@ -10,5 +10,9 @@
     <string name="exit">Exit</string>
     <string name="about">This app was developed by the Group 11 Team.</string>
     <string name="about2">Thanks for use this app!</string>
+    <string name="confirm_delete">Do you want to delete the original media file?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="uriCameraImage">/DCIM/Camera</string>
 
 </resources>
